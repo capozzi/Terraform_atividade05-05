@@ -1,0 +1,18 @@
+data "google_compute_image" "webserver_image" {
+  family  = "ubuntu-minimal-2004-lts"
+  project = "ubuntu-os-cloud"
+}
+
+data "template_file" "user_data" {
+  template = file("files/user_data.sh")
+}
+
+resource "google_compute_instance" "webserver_instance" {
+  name = "webserver-server-${terraform.workspace}"
+  machine_type = "e2-medium"
+  zone = "us-central1-a"
+  boot_disk {
+    initialize_params {
+      image = format("%s/%s",data.google_compute_image.webserver_image.project , data.google_compute_image.webserver_image.family)
+    }
+
